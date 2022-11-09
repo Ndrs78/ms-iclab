@@ -66,7 +66,7 @@ public class RestData {
 	}
 
 	@GetMapping(path = "/estadoMundial", produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody Pais getTotalMundial() {
+	public @ResponseBody Mundial getTotalMundial() {
 		LOGGER.log(Level.INFO, "Consulta mundial");
 
 		RestTemplate restTemplate = new RestTemplate();
