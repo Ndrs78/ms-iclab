@@ -1,32 +1,4 @@
-def getRepoURL() {
-  sh "git config --get remote.origin.url > .git/remote-url"
-  return readFile(".git/remote-url").trim()
-}
-
-def getCommitSha() {
-  sh "git show-ref -s $GIT_BRANCH > .git/current-commit"
-  return readFile(".git/current-commit").trim()
-}
-
-def updateGithubCommitStatus() {
-  repoUrl = getRepoURL()
-  commitSha = getCommitSha()
-
-  step([
-    $class: 'GitHubCommitStatusSetter',
-    reposSource: [$class: "ManuallyEnteredRepositorySource", url: repoUrl],
-    commitShaSource: [$class: "ManuallyEnteredShaSource", sha: commitSha],
-    errorHandlers: [[$class: 'ShallowAnyErrorHandler']],
-    statusResultSource: [
-      $class: 'ConditionalStatusResultSource',
-      results: [
-        [$class: 'BetterThanOrEqualBuildResult', result: 'SUCCESS', state: 'SUCCESS'],
-        [$class: 'BetterThanOrEqualBuildResult', result: 'FAILURE', state: 'FAILURE'],
-        [$class: 'AnyBuildResult', state: 'FAILURE', message: 'Loophole']
-      ]
-    ]
-  ])
-}
+def slackMessageCommon = "[Grupo 4][Pipeline CI][Branch: ${env.BRANCH_NAME}][Build: ${env.BUILD_NUMBER}]"
 
 pipeline {
     agent any
@@ -62,8 +34,11 @@ pipeline {
         }
     }
     post {
-        always {
-            updateGithubCommitStatus()
+        success {
+            slackSend(channel: 'lab-ceres-mod4-sec2-status', color: 'good', message: "${slackMessageCommon}[Result: SUCCESS]")
+        }
+        failure {
+            slackSend(channel: 'lab-ceres-mod4-sec2-status', color: 'danger', message: "${slackMessageCommon}[Result: FAILED]")
         }
     }
 }
