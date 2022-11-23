@@ -40,10 +40,16 @@ pipeline {
     }
     post {
         success {
-            slackSend(channel: 'lab-ceres-mod4-sec2-status', color: 'good', message: "${slackMessageCommon}[Result: SUCCESS]")
+            slackSend(
+                channel: 'lab-ceres-mod4-sec2-status',
+                color: 'good',
+                message: "${slackMessageCommon}[Result: SUCCESS] (<${env.BUILD_URL}|Open>)")
         }
         failure {
-            slackSend(channel: 'lab-ceres-mod4-sec2-status', color: 'danger', message: "${slackMessageCommon}[Stage: ${lastStage}][Result: FAILED]")
+            slackSend(
+                channel: 'lab-ceres-mod4-sec2-status',
+                color: 'danger',
+                message: "${slackMessageCommon}[Stage: ${lastStage}][Result: FAILED] (<${env.BUILD_URL}|Open>)")
         }
     }
 }
