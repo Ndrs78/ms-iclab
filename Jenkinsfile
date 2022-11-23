@@ -34,26 +34,34 @@ pipeline {
                 }
             }
         }
-        stage("Subir Nexus"){
-                        nexusPublisher nexusInstanceId: 'nexus',
-                        nexusRepositoryId: 'Lab4_devops-nexus',
-                        packages: [
-                            [$class: 'MavenPackage',
-                                mavenAssetList: [
-                                    [classifier: '',
-                                    extension: '.jar',
-                                    filePath: 'build/DevOpsUsach2020-0.0.1.jar'
-                                ]
-                            ],
-                                mavenCoordinate: [
-                                    artifactId: 'DevOpsUsach',
-                                    groupId: 'com.devopsusach',
-                                    packaging: 'jar',
-                                    version: '0.0.1'
-                                ]
-                            ]
-                        ]
-        }
+        stage ('Subir Nexus') {
+                steps {
+                    script {
+                            //pipeline-utility-steps
+                        dir("build_java"){
+                            def   pom = readMavenPom file: "pom.xml";
+                                
+                            dir("target"){
+                                nexusArtifactUploader(
+                                    nexusVersion: 'nexus3',
+                                    protocol: 'http',
+                                    nexusUrl: 'localhost:8081',
+                                    groupId: group-ceres-4,
+                                    version: 0.0.1,
+                                    repository: 'Lab_devops-nexus',
+                                    credentialsId: 'useradminnexus',
+                                    artifacts: [
+                                        [artifactId: Lab4_devops,
+                                        classifier: '',
+                                        filePath: 'build/DevOpsUsach2020-0.0.1.jar',
+                                        type: pom.packaging]
+                                    ]
+                                )
+                            }
+                        }
+                    }
+                }
+        }    
         stage('Make a test request') {
             steps {
                 script { lastStage = env.STAGE_NAME }
