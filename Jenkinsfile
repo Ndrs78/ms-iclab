@@ -51,7 +51,7 @@ pipeline {
                                     repository: 'Lab_devops-nexus',
                                     credentialsId: 'useradminnexus',
                                     artifacts: [
-                                        [artifactId: Lab4_devops,
+                                        [artifactId: 'Lab4_devops',
                                         classifier: '',
                                         filePath: 'build/DevOpsUsach2020-0.0.1.jar',
                                         type: pom.packaging]
