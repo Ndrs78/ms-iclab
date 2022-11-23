@@ -35,6 +35,7 @@ pipeline {
             }
         }
         stage ('Subir Nexus') {
+            steps{
                 nexusPublisher nexusInstanceId: 'nexus', 
                 nexusRepositoryId: 'Lab4_devops-nexus', 
                 packages: [[$class: 'MavenPackage', 
@@ -43,6 +44,7 @@ pipeline {
                 mavenCoordinate: [artifactId: 'ceres_4', 
                 groupId: 'Usach_ceres_4', packaging: 'jar', 
                 version: '1.1.0']]]
+                 }
         }
         stage('Make a test request') {
             steps {
