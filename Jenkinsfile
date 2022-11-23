@@ -34,6 +34,26 @@ pipeline {
                 }
             }
         }
+        stage("Subir Nexus"){
+                        nexusPublisher nexusInstanceId: 'nexus',
+                        nexusRepositoryId: 'Lab4_devops-nexus',
+                        packages: [
+                            [$class: 'MavenPackage',
+                                mavenAssetList: [
+                                    [classifier: '',
+                                    extension: '.jar',
+                                    filePath: 'build/DevOpsUsach2020-0.0.1.jar'
+                                ]
+                            ],
+                                mavenCoordinate: [
+                                    artifactId: 'DevOpsUsach',
+                                    groupId: 'com.devopsusach',
+                                    packaging: 'jar',
+                                    version: '0.0.1'
+                                ]
+                            ]
+                        ]
+        }
         stage('Make a test request') {
             steps {
                 script { lastStage = env.STAGE_NAME }
