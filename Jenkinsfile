@@ -47,7 +47,7 @@ pipeline {
                                     protocol: 'http',
                                     nexusUrl: 'localhost:8081',
                                     groupId: group-ceres-4,
-                                    version: 0.0.1,
+                                    version: '0.0.1',
                                     repository: 'Lab_devops-nexus',
                                     credentialsId: 'useradminnexus',
                                     artifacts: [
