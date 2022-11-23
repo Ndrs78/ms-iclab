@@ -29,7 +29,7 @@ pipeline {
         }
         stage("Sonar: Análisis SonarQube"){
             steps {
-                withSonarQubeEnv('SonarQube on Docker') {
+                withSonarQubeEnv('sonarqube') {
                 sh('./mvnw verify sonar:sonar -Dsonar.projectKey=ceres-grupo4')
                 }
             }
