@@ -80,7 +80,7 @@ pipeline {
         stage("Paso 6: Descargar Nexus"){
             steps {
                 script{
-                    sh ' curl -X GET -u admin:$NEXUS_PASSWORD "http://nexus:8081/repository/maven-usach-ceres/com/devopsusach2020/DevOpsUsach2020/0.0.1/DevOpsUsach2020-0.0.1.jar" -O'
+                    sh ' curl -X GET -u nexus-user:nexus-user "http://nexus:8081/repository/maven-usach-ceres/com/devopsusach2020/DevOpsUsach2020/0.0.1/DevOpsUsach2020-0.0.1.jar" -O'
                 }
             }
         }
