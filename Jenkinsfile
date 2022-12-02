@@ -61,7 +61,9 @@ pipeline {
                     sleep 5
                     curl -X GET "http://localhost:8081/rest/mscovid/test?msg=testing"
                     kill $JAVA_PID'''
+                    )
             }
+                    
         }
     
     post {
