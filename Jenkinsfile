@@ -43,7 +43,7 @@ pipeline {
                 filePath: '/var/jenkins_home/workspace/Prueba_ndrs78_ejercicio4/build/DevOpsUsach2020-0.0.1.jar']], 
                 mavenCoordinate: [artifactId: 'ceres_4', 
                 groupId: 'Usach_ceres_4', packaging: 'jar', 
-                version: '1.1.0']]]
+                version: '1.1.1']]]
                  }
         }
         stage('Make a test request') {
