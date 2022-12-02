@@ -63,7 +63,7 @@ pipeline {
                     kill $JAVA_PID'''
             }
         }
-    }
+    
     post {
         success {
             slackSend(
