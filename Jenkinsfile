@@ -7,7 +7,7 @@ pipeline {
     agent any
     environment {
         channel='C04BPL2A5E3'
-        NEXUS_PASSWORD     = credentials('nexus-user')
+        
     }
     stages {
      
