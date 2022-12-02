@@ -1,74 +1,111 @@
-def lastStage
-def slackMessageCommon = "[Grupo 4][Pipeline CI][Branch: ${env.BRANCH_NAME}][Build: ${env.BUILD_NUMBER}]"
+import groovy.json.JsonSlurperClassic
 
+def jsonParse(def json) {
+    new groovy.json.JsonSlurperClassic().parseText(json)
+}
 pipeline {
     agent any
-    stages {
-        stage('Build') {
-            steps {
-                script { lastStage = env.STAGE_NAME }
-                sh('./mvnw clean compile -e')
-            }
-        }
-        stage('Test') {
-            steps {
-                script { lastStage = env.STAGE_NAME }
-                sh('./mvnw test -e')
-            }
-        }
-        stage('Create package') {
-            steps {
-                script { lastStage = env.STAGE_NAME }
-                sh('./mvnw package -e')
-            }
-            post {
-                success {
-                    archiveArtifacts(artifacts: 'build/*.jar')
-                }
-            }
-        }
-        stage("Sonar: Análisis SonarQube"){
-            steps {
-                withSonarQubeEnv('sonarqube') {
-                sh('./mvnw verify sonar:sonar -Dsonar.projectKey=ceres-grupo4')
-                }
-            }
-        }
-        stage ('Subir Nexus') {
-            steps{
-                nexusPublisher nexusInstanceId: 'nexus', 
-                nexusRepositoryId: 'Lab4_devops-nexus', 
-                packages: [[$class: 'MavenPackage', 
-                mavenAssetList: [[classifier: '', extension: '', 
-                filePath: '/var/jenkins_home/workspace/Prueba_ndrs78_ejercicio4/build/DevOpsUsach2020-0.0.1.jar']], 
-                mavenCoordinate: [artifactId: 'ceres_4', 
-                groupId: 'Usach_ceres_4', packaging: 'jar', 
-                version: '1.1.0']]]
-                 }
-        }
-        stage('Make a test request') {
-            steps {
-                script { lastStage = env.STAGE_NAME }
-                sh('''nohup bash ./mvnw spring-boot:run &
-                SPRING_BOOT_PID="$!"
-                sleep 5
-                curl -X GET "http://localhost:8081/rest/mscovid/test?msg=testing"
-                kill $SPRING_BOOT_PID''')
-            }
-        }
+    environment {
+        channel='C04BPL2A5E3'
+        
     }
-    post {
-        success {
-            slackSend(
-                channel: 'lab-ceres-mod4-sec2-status',
-                color: 'good',
-                message: "${slackMessageCommon}[Result: SUCCESS] (<${env.BUILD_URL}|Open>)")
+    stages {
+     
+        stage("Paso 1: Build && Test"){
+            steps {
+                script{
+                    sh "echo 'Build && Test!'"
+                    sh "./mvnw clean package -e"    
+                }
+            }
         }
-        failure {
-            slackSend(
-                channel: 'lab-ceres-mod4-sec2-status',
-                color: 'danger',
-                message: "${slackMessageCommon}[Stage: ${lastStage}][Result: FAILED] (<${env.BUILD_URL}|Open>)")
+
+        stage("Paso 2: Sonar - Análisis Estático"){
+            steps {
+                script{
+                    sh "echo 'Análisis Estático!'"
+                        withSonarQubeEnv('sonarqube') {
+                            sh "echo 'Calling sonar by ID!'"
+                            // Run Maven on a Unix agent to execute Sonar.
+                            sh './mvnw clean verify sonar:sonar -Dsonar.projectKey=ejemplo-maven-full-stages -Dsonar.projectName=cejemplo-maven-full-stages -Dsonar.java.binaries=build'
+                        }
+                        
+                }
+            }
+        }
+        
+        stage("Paso 3: Curl Springboot maven sleep 20"){
+            steps {
+                script{
+                    sh "nohup bash ./mvnw spring-boot:run  & >/dev/null"
+                    sh "sleep 20 && curl -X GET 'http://localhost:8081/rest/mscovid/test?msg=testing'"
+                }
+            }
+        }
+        stage("Paso 4: Detener Spring Boot"){
+            steps {
+                script{
+                    sh '''
+                        echo 'Process Spring Boot Java: ' $(pidof java | awk '{print $1}')  
+                        sleep 20
+                        kill -9 $(pidof java | awk '{print $1}')
+                    '''
+                }
+            }
+        }
+           stage("Paso 5: Subir Artefacto a Nexus"){
+            steps {
+                script{
+                    nexusPublisher nexusInstanceId: 'nexus',
+                        nexusRepositoryId: 'maven-usach-ceres',
+                        packages: [
+                            [$class: 'MavenPackage',
+                                mavenAssetList: [
+                                    [classifier: '',
+                                    extension: 'jar',
+                                    filePath: 'build/DevOpsUsach2020-0.0.1.jar'
+                                ]
+                            ],
+                                mavenCoordinate: [
+                                    artifactId: 'DevOpsUsach2020',
+                                    groupId: 'com.devopsusach2020',
+                                    packaging: 'jar',
+                                    version: '0.0.1'
+                                ]
+                            ]
+                        ]
+                }
+            }
+        }
+        stage("Paso 6: Descargar Nexus"){
+            steps {
+                script{
+                    sh ' curl -X GET -u nexus-user:nexus-user "http://nexus:8081/repository/maven-usach-ceres/com/devopsusach2020/DevOpsUsach2020/0.0.1/DevOpsUsach2020-0.0.1.jar" -O'
+                }
+            }
+        }
+         stage("Paso 7: Levantar Artefacto Jar en server Jenkins"){
+            steps {
+                script{
+                    sh 'nohup java -jar DevOpsUsach2020-0.0.1.jar & >/dev/null'
+                }
+            }
+        }
+          stage("Paso 8: Testear Artefacto - Dormir(Esperar 20sg) "){
+            steps {
+                script{
+                    sh "sleep 20 && curl -X GET 'http://localhost:8081/rest/mscovid/test?msg=testing'"
+                }
+            }
+        }
+        stage("Paso 9:Detener Atefacto jar en Jenkins server"){
+            steps {
+                sh '''
+                    echo 'Process Java .jar: ' $(pidof java | awk '{print $1}')  
+                    sleep 20
+                    kill -9 $(pidof java | awk '{print $1}')
+                '''
+            }
         }
     }
 }
