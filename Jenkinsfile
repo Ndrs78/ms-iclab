@@ -40,7 +40,7 @@ pipeline {
                 nexusRepositoryId: 'Lab4_devops-nexus', 
                 packages: [[$class: 'MavenPackage', 
                 mavenAssetList: [[classifier: '', extension: '', 
-                filePath: '/var/jenkins_home/workspace/Prueba_ndrs78_ejercicio4/build/DevOpsUsach2020-0.0.1.jar']], 
+                filePath: '/var/jenkins_home/workspace/Ejercicio4/build/DevOpsUsach2020-0.0.1.jar']], 
                 mavenCoordinate: [artifactId: 'ceres_4', 
                 groupId: 'Usach_ceres_4', packaging: 'jar', 
                 version: '1.1.1']]]
