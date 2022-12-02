@@ -46,14 +46,21 @@ pipeline {
                 version: '1.1.1']]]
                  }
         }
-        stage('Make a test request') {
+       stage('Pull package and make test request') {
             steps {
                 script { lastStage = env.STAGE_NAME }
-                sh('''nohup bash ./mvnw spring-boot:run &
-                SPRING_BOOT_PID="$!"
-                sleep 5
-                curl -X GET "http://localhost:8081/rest/mscovid/test?msg=testing"
-                kill $SPRING_BOOT_PID''')
+                withCredentials([usernameColonPassword(credentialsId: 'nexus-user', variable: 'nexusLogin')]) {
+                    sh(
+                        'curl -X GET -u "$nexusLogin" -O ' + 
+                        "\"http://nexus:8081/repository/maven-ceres-grupo4/cl/usach/DevOpsUsach2020/${env.PROJECT_VERSION}/DevOpsUsach2020-${env.PROJECT_VERSION}.jar\""
+                    )
+                }
+                sh(
+                    "java -jar \"DevOpsUsach2020-${env.PROJECT_VERSION}.jar\" & " + 
+                    '''JAVA_PID="$!"
+                    sleep 5
+                    curl -X GET "http://localhost:8081/rest/mscovid/test?msg=testing"
+                    kill $JAVA_PID'''
             }
         }
     }
