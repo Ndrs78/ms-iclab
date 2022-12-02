@@ -98,6 +98,13 @@ pipeline {
                 }
             }
         }
+          stage("Paso 8.2: Testear Artefacto - Postman "){
+            steps {
+                script{
+                    sh "newman run ejemplo-maven.postman_collection.json"
+                }
+            }
+        }
         stage("Paso 9:Detener Atefacto jar en Jenkins server"){
             steps {
                 sh '''
