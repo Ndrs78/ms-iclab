@@ -38,7 +38,7 @@ pipeline {
             steps {
                 script{
                     sh "nohup bash ./mvnw spring-boot:run  & >/dev/null"
-                    sh "sleep 20 && curl -X GET 'http://localhost:8081/rest/mscovid/test?msg=testing'"
+                    sh "sleep 10 && curl -X GET 'http://localhost:8081/rest/mscovid/test?msg=testing'"
                 }
             }
         }
@@ -47,7 +47,7 @@ pipeline {
                 script{
                     sh '''
                         echo 'Process Spring Boot Java: ' $(pidof java | awk '{print $1}')  
-                        sleep 20
+                        sleep 10
                         kill -9 $(pidof java | awk '{print $1}')
                     '''
                 }
@@ -94,7 +94,7 @@ pipeline {
           stage("Paso 8: Testear Artefacto - Dormir(Esperar 20sg) "){
             steps {
                 script{
-                    sh "sleep 20 && curl -X GET 'http://localhost:8081/rest/mscovid/test?msg=testing'"
+                    sh "sleep 10 && curl -X GET 'http://localhost:8081/rest/mscovid/test?msg=testing'"
                 }
             }
         }
@@ -109,7 +109,7 @@ pipeline {
             steps {
                 sh '''
                     echo 'Process Java .jar: ' $(pidof java | awk '{print $1}')  
-                    sleep 20
+                    sleep 10
                     kill -9 $(pidof java | awk '{print $1}')
                 '''
             }
