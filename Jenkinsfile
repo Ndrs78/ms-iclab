@@ -101,7 +101,7 @@ pipeline {
           stage("Paso 8.2: Testear Artefacto - Postman "){
             steps {
                 script{
-                    sh "newman run ejemplo-maven.postman_collection.json"
+                    sh "newman run ejemplo-maven.postman_collection.json -n 10  --delay-request 1000"
                 }
             }
         }
