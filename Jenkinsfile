@@ -69,6 +69,13 @@ pipeline {
       }
     }
   }
+    stage("Testear Artefacto - Newman "){
+            steps {
+                script{
+                    sh "newman run ejemplo-maven.postman_collection.json -n 5  --delay-request 1000"
+                }
+            }
+        }
   post {
     success {
       slackSend(
