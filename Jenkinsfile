@@ -22,7 +22,7 @@ pipeline {
     }
     stage("Run SonarQube on code"){
       steps {
-        withSonarQubeEnv('ceres-sonar') {
+        withSonarQubeEnv('sonarqube') {
         sh('./mvnw verify sonar:sonar -Dsonar.projectKey=ceres-grupo4')
         }
       }
