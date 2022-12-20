@@ -90,4 +90,5 @@ pipeline {
         message: "${slackMessageCommon}[Stage: ${lastStage}][Result: FAILED] (<${env.BUILD_URL}|Open>)")
     }
   }
+ }
 }
