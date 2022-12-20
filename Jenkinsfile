@@ -69,13 +69,7 @@ pipeline {
       }
     }
   
-    stage("Testear Artefacto - Newman "){
-            steps {
-                script{
-                    sh "newman run ejemplo-maven.postman_collection.json -n 5  --delay-request 1000"
-                }
-            }
-        }
+    
   post {
     success {
       slackSend(
@@ -88,6 +82,14 @@ pipeline {
         channel: 'lab-ceres-mod4-sec2-status',
         color: 'danger',
         message: "${slackMessageCommon}[Stage: ${lastStage}][Result: FAILED] (<${env.BUILD_URL}|Open>)")
+    }
+    stage("Testear Artefacto - Newman "){
+            steps {
+                script{
+                    sh "newman run ejemplo-maven.postman_collection.json -n 5  --delay-request 1000"
+                }
+            }
+        }
     }
   }
  }
