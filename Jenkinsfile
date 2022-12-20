@@ -68,7 +68,7 @@ pipeline {
         // No need to kill the process. Jenkins's ProcessTreeKiller will do it for us.
       }
     }
-  }
+  
     stage("Testear Artefacto - Newman "){
             steps {
                 script{
